@@ -1,3 +1,4 @@
+CREATE SCHEMA if NOT EXISTS temp;
 DROP TABLE if EXISTS temp.source_to_update;
 DROP TABLE if EXISTS temp.vocab_logger;
 DROP TABLE if EXISTS temp.gis_source;

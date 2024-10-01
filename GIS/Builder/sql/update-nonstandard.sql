@@ -286,6 +286,49 @@ AND TRIM(UPPER(a.source_concept_code)) IN
     (SELECT distinct TRIM(UPPER(source_concept_code)) FROM temp.source_to_update WHERE TRIM(LOWER(a.predicate_id)) = 'skos:exactmatch');
 
 
+
+INSERT INTO vocab.concept_rel_ns_staging (concept_id_1,
+                                          concept_id_2,
+                                          relationship_id,
+                                          valid_start_date,
+                                          valid_end_date,
+                                          invalid_reason)
+SELECT a.target_concept_id,
+       b.concept_id,
+       'Relat context of',
+       now()::date,
+       '2099-12-31'::date,
+       NULL
+FROM temp.concept_check_ns_raw a
+    INNER JOIN vocab.concept_ns_staging b
+    ON UPPER(TRIM(a.source_concept_code)) = UPPER(TRIM(b.concept_code))
+WHERE trim(lower(a.predicate_id)) = 'skos:relatedmatch'
+AND a.target_domain_id = 'Observation'
+AND TRIM(UPPER(a.source_concept_code)) IN
+    (SELECT distinct TRIM(UPPER(source_concept_code)) FROM temp.source_to_update WHERE TRIM(LOWER(a.predicate_id)) = 'skos:exactmatch');
+
+INSERT INTO vocab.concept_rel_ns_staging (concept_id_1,
+                                          concept_id_2,
+                                          relationship_id,
+                                          valid_start_date,
+                                          valid_end_date,
+                                          invalid_reason)
+SELECT b.concept_id,
+       a.target_concept_id,
+       'Has relat context',
+       now()::date,
+       '2099-12-31'::date,
+       NULL
+FROM temp.concept_check_ns_raw a
+    INNER JOIN vocab.concept_ns_staging b
+    ON UPPER(TRIM(a.source_concept_code)) = UPPER(TRIM(b.concept_code))
+WHERE trim(lower(a.predicate_id)) = 'skos:relatedmatch'
+AND a.target_domain_id = 'Observation'
+AND TRIM(UPPER(a.source_concept_code)) IN
+    (SELECT distinct TRIM(UPPER(source_concept_code)) FROM temp.source_to_update WHERE TRIM(LOWER(a.predicate_id)) = 'skos:exactmatch');
+
+
+
 INSERT INTO vocab.concept_rel_ns_staging (concept_id_1,
                                           concept_id_2,
                                           relationship_id,

@@ -1,10 +1,8 @@
 #!/bin/bash
 
 
-#export SQL_DIRECTORY="${RUNNER_WORKDIR}/chorus-mapping-stage/chorus-mapping-stage/Builder/sql"
-export SQL_DIRECTORY="/extracts/data/vocab-builder/chorus-mapping-stage/Builder/sql"
-#export MAP_DIRECTORY="${RUNNER_WORKDIR}/chorus-mapping-stage/chorus-mapping-stage/Mappings"
-export MAP_DIRECTORY="/extracts/data/vocab-builder/chorus-mapping-stage/Mappings"
+export SQL_DIRECTORY="${RUNNER_WORKDIR}/CVB/CVB/GIS/Builder/sql"
+export MAP_DIRECTORY="${RUNNER_WORKDIR}/CVB/CVB/GIS/Mappings"
 
 # Remove all additions from db
 export PGPASSWORD="$1" && psql -h "$2" -d postgres -U postgres -f "${SQL_DIRECTORY}/hard-reset.sql"

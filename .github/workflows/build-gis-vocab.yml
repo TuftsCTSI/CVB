@@ -27,15 +27,15 @@ jobs:
         echo "Launching vocab builder..." && \
           apt-get update && \
           apt-get install --no-install-recommends --yes postgresql-client && \
-          chmod +x /tmp/runner/CVB/CVB/Builder/execute-pipeline.sh && \
-          /tmp/runner/CVB/CVB/Builder/execute-pipeline.sh $PG_PASSWORD $PG_HOST
-          rm -rf /tmp/runner/chorus-mapping-stage/chorus-mapping-stage/Ontology && mkdir /tmp/runner/chorus-mapping-stage/chorus-mapping-stage/Ontology
-          cp /tmp/output/* /tmp/runner/chorus-mapping-stage/chorus-mapping-stage/Ontology/
+          chmod +x /tmp/runner/CVB/CVB/GIS/Builder/execute-pipeline.sh && \
+          /tmp/runner/CVB/CVB/GIS/Builder/execute-pipeline.sh $PG_PASSWORD $PG_HOST
+          rm -rf /tmp/runner/CVB/CVB/GIS/Ontology && mkdir /tmp/runner/CVB/CVB/GIS/Ontology
+          cp /tmp/output/* /tmp/runner/CVB/CVB/GIS/Ontology/
           git config --global user.name 'omop-vocab-builder[bot]'
           git config --global user.email '183100713+omop-vocab-builder[bot]@users.noreply.github.com'
           git remote set-url origin https://x-access-token:$APP_TOKEN@github.com/$GITHUB_REPOSITORY
           git checkout main
-          git add /tmp/runner/CVB/CVB/Ontology/*
-          git commit -am "Converted Vocabulary Delta Files: `date +\"%Y-%m-%d\"`"
+          git add /tmp/runner/CVB/CVB/GIS/Ontology/*
+          git commit -am "Converted GIS Vocabulary Delta Files: `date +\"%Y-%m-%d\"`"
           git push
           

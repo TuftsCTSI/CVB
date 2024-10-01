@@ -36,16 +36,12 @@ INSERT INTO vocab.concept_s_staging (concept_id,
                                      predicate_id)
 SELECT nextval('vocab.master_id_assignment'),
        cc.source_description,
-       (CASE
-            WHEN cd.domain_id IS NOT NULL THEN cd.domain_id
-            WHEN cd.domain_id IS NULL THEN 'Metadata' END),
-       'B2AI',
-       (CASE
-            WHEN cd.concept_class_id IS NOT NULL THEN cd.concept_class_id
-            WHEN cd.concept_class_id IS NULL THEN 'B2AI-SRC' END),
+       domain_id,
+       vocabulary_id,
+       concept_class_id,
        'S',
        UPPER(cc.source_concept_code),
-       now()::date,
+       valid_start_date,
        '2099-12-31'::date,
        NULL,
        cc.target_concept_id,
@@ -57,7 +53,6 @@ FROM temp.concept_check_s cc
 
 
 DROP TABLE IF EXISTS vocab.concept_rel_s_staging;
-DROP TABLE IF EXISTS vocab.concept_rel_s_staging_survey;
 DROP TABLE IF EXISTS temp.concept_rel_s_raw;
 
 CREATE TABLE vocab.concept_rel_s_staging AS (SELECT *
@@ -368,12 +363,6 @@ SELECT concept_id,
        1
 FROM children;
 
-
-/*
- ---------  ----------  ----------  ----------  ----------
- SOURCE-TO-CONCEPT-MAP UPDATE FOR STANDARD CUSTOMS
- ----------  ----------  ----------  ----------  ----------
- */
 DROP TABLE IF EXISTS vocab.s2c_map_staging;
 
 CREATE TABLE vocab.s2c_map_staging AS (SELECT *

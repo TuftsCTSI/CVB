@@ -14,8 +14,7 @@ CREATE TABLE temp.CONCEPT_CHECK_S AS
                          WHERE (concept_id > 2051500000 AND concept_id < 2052500000)
                            AND standard_concept = 'S') co
                         ON TRIM(UPPER(sc.source_concept_code)) = TRIM(UPPER(co.concept_code))) a
-     WHERE a.source_description IS NOT NULL
-     AND TRIM(UPPER(a.source_concept_code)) NOT IN (SELECT distinct TRIM(UPPER(source_concept_code)) FROM temp.source_to_update WHERE TRIM(LOWER(a.predicate_id)) = 'skos:exactmatch')
+     WHERE a.source_concept_class_id != 'Suppl Concept'
      AND a.concept_name IS NULL);
 
 
@@ -73,7 +72,7 @@ CREATE TABLE temp.CONCEPT_CHECK_NS AS
      FROM temp.source_to_update sc
               LEFT JOIN (SELECT *
                          FROM vocab.CONCEPT
-                         WHERE concept_id > 2000000000
+                         WHERE (concept_id > 2051500000 AND concept_id < 2052500000)
                            AND standard_concept IS NULL) co
                         ON TRIM(UPPER(sc.source_concept_code)) = TRIM(UPPER(co.concept_code)));
 
