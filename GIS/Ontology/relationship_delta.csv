@@ -1,0 +1,6 @@
+relationship_id,relationship_name,is_hierarchical,defines_ancestry,reverse_relationship_id,relationship_concept_id
+Impact on process,Impact on process,0,0,Impacted by,2052499992
+Locates in cell,Locates in cell,0,0,Cell contains,2052499993
+Locates in tissue,Locates in tissue,0,0,Tissue contains,2052499994
+Affects biostructure,Affects biostructure,0,0,Affected by,2052499995
+Has geometry,Has geometry,0,0,Is geometry of,2052499996

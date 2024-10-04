@@ -1,0 +1,32 @@
+concept_class_id,concept_class_name,concept_class_concept_id
+ADI Construct,ADI Construct,46233639
+ADI Item,ADI Item,46233639
+AHRQ Construct,AHRQ Construct,46233639
+AHRQ Determinant,AHRQ Determinant,46233639
+AHRQ Item,AHRQ Item,46233639
+COI Construct,COI Construct,46233639
+COI Determinant,COI Determinant,46233639
+COI Item,COI Item,46233639
+EJI EBM Item,EJI EBM Item,46233639
+EJI HVM Item,EJI HVM Item,46233639
+EJI Item,EJI Item,46233639
+Exposome Target,Exposome Target,46233639
+Exposome Transporter,Exposome Transporter,46233639
+Exposure Type Concept,Exposure Type Concept,46233639
+Geometry Relationship,Geometry Relationship,46233639
+Geometry Type,Geometry Type,46233639
+GIS Measure,GIS Measure,46233639
+SDG Goal,SDG Goal,46233639
+SDG Indicator,SDG Indicator,46233639
+SDOH Construct,SDOH Construct,46233639
+SDOH Determinant,SDOH Determinant,46233639
+SDOH Item,SDOH Item,46233639
+SDOHO Construct,SDOHO Construct,46233639
+SDOHO Determinant,SDOHO Determinant,46233639
+SDOHO Item,SDOHO Item,46233639
+SDOHO Value,SDOHO Value,46233639
+SEDH Construct,SEDH Construct,46233639
+SEDH Item,SEDH Item,46233639
+SVI Construct,SVI Construct,46233639
+SVI Determinant,SVI Determinant,46233639
+SVI Item,SVI Item,46233639
