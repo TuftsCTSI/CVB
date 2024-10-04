@@ -82,7 +82,7 @@ CREATE TABLE temp.gis_hierarchy
 
 CREATE TABLE temp.source_to_update
 (
-    source_code                TEXT,
+    source_concept_code                TEXT,
     source_concept_id          INTEGER,
     source_vocabulary_id       TEXT,
     source_domain_id           TEXT,

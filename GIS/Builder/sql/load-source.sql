@@ -87,7 +87,7 @@ WITH all_mappings AS (
 
 INSERT
 INTO temp.source_to_update   (
-                                source_code,
+                                source_concept_code,
                                 source_concept_id,
                                 source_vocabulary_id,
                                 source_domain_id,

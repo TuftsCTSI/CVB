@@ -10,7 +10,7 @@ delete from concept where concept_id >= 2000000000;
 delete from concept_synonym WHERE concept_id >= 2000000000;
 delete from domain where domain_concept_id >= 2000000000;
 delete from concept_class WHERE concept_class_concept_id = 46233639 AND concept_class_id != 'Suppl Concept';
-delete from relationship WHERE relationship_id >= 2000000000;
+delete from relationship WHERE relationship_concept_id >= 2000000000;
 delete from source_to_concept_map;
 delete from mapping_metadata;
 set session_replication_role to origin;

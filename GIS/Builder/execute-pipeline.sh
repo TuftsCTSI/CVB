@@ -9,7 +9,7 @@ export MAP_DIRECTORY="${RUNNER_WORKDIR}/CVB/CVB/GIS/Mappings"
 
 
 # ONLY EXECUTE ON FIRST RUN!
-psql -h "$2" -d gis_vocabulary -U postgres -f "${SQL_DIRECTORY}/create-general-concepts.sql"
+#psql -h "$2" -d gis_vocabulary -U postgres -f "${SQL_DIRECTORY}/create-general-concepts.sql"
 
 # Create tables for source mapping files
 psql -h "$2" -d gis_vocabulary -U postgres -f "${SQL_DIRECTORY}/source-ddl.sql"
