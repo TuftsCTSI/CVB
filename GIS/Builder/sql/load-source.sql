@@ -94,7 +94,7 @@ INTO temp.source_to_update   (
                                 source_concept_class_id,
                                 source_description,
                                 source_description_synonym,
-                                valid_start_date,
+                                valid_start,
                                 relationship_id,
                                 predicate_id,
                                 confidence,
@@ -141,7 +141,7 @@ SELECT TRIM(LEFT(source_code, 50)),
         change_required
 FROM all_mappings
 WHERE NULLIF (TRIM (LEFT (source_code, 50)), '') IS NOT NULL
-  AND TRIM decision = 1;
+  AND decision = 1;
 
 SELECT COUNT(*)
 FROM temp.source_to_update;
