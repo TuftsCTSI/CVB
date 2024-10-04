@@ -49,7 +49,7 @@ SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT COALESCE(max(c
        predicate_id
 FROM temp.concept_check_ns cc
          INNER JOIN vocab.concept cd ON cc.target_concept_id = cd.concept_id;
-
+-- Note that the inner join above will only create NS concepts for those with a mapping to an existing standard
 
 
 /*
