@@ -36,16 +36,12 @@ INSERT INTO vocab.concept_ns_staging (concept_id,
                                       predicate_id)
 SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT COALESCE(max(concept_id),2000000000) FROM vocab.concept WHERE concept_id < 2147000000 AND concept_id > 2000000000) AS concept_id,
        LEFT(cc.source_description, 255),
-       (CASE
-            WHEN cd.domain_id IS NOT NULL THEN cd.domain_id
-            WHEN cd.domain_id IS NULL THEN 'Metadata' END),
-       'B2AI',
-       (CASE
-            WHEN cd.concept_class_id IS NOT NULL THEN cd.concept_class_id
-            WHEN cd.concept_class_id IS NULL THEN 'B2AI-SRC' END),
+       domain_id,
+       vocabulary_id,
+       concept_class_id,
        NULL,
        UPPER(cc.source_concept_code),
-       now()::date,
+       valid_start,
        '2099-12-31'::date,
        NULL,
        target_concept_id,
@@ -441,7 +437,7 @@ INSERT INTO vocab.s2c_map_staging(source_code,
                                   invalid_reason)
 SELECT replace(trim(ns.source_concept_code), ' ', '_'),
        b.concept_id,
-       'B2AI',
+       source_vocabulary_id,
        b.concept_name,
        ns.target_concept_id,
        con.vocabulary_id,
@@ -467,10 +463,10 @@ INSERT INTO vocab.s2c_map_staging(source_code,
                                   invalid_reason)
 SELECT LEFT(replace(trim(a.concept_code), ' ', '_'), 50),
        b.concept_id,
-       'B2AI',
+       source_vocabulary_id,
        replace(a.concept_name, '''', ''),
        a.concept_id,
-       'B2AI',
+       target_vocabulary_id,
        now()::date,
        '2099-12-31'::date,
        NULL
@@ -540,7 +536,7 @@ CREATE TABLE vocab.mapping_metadata_staging
 
 INSERT INTO vocab.mapping_metadata_staging
 SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT count(*) FROM vocab.mapping_metadata) AS mapping_concept_id,
-       CONCAT(source_concept_code, '|| - ||', 'B2AI', '|| - ||', con.concept_code, '|| - ||', con.vocabulary_id) AS mapping_concept_code,
+       CONCAT(source_concept_code, '|| - ||', source_vocabulary_id, '|| - ||', con.concept_code, '|| - ||', con.vocabulary_id) AS mapping_concept_code,
        COALESCE(confidence, 0),
        predicate_id,
        'sempav:manualMappingCuration',
@@ -556,7 +552,7 @@ FROM temp.source_to_update stu
         ON con.concept_id = stu.target_concept_id
     LEFT JOIN vocab.review_ids rid
         ON trim(lower(stu.reviewer_name)) = trim(lower(rid.name))
-WHERE CONCAT(source_concept_code, '|| - ||', 'B2AI', '|| - ||', con.concept_code, '|| - ||', con.vocabulary_id)
+WHERE CONCAT(source_concept_code, '|| - ||', source_vocabulary_id, '|| - ||', con.concept_code, '|| - ||', con.vocabulary_id)
           NOT IN (SELECT mapping_concept_code FROM vocab.mapping_metadata)
 ;
 

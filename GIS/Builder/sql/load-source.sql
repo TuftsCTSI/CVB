@@ -140,8 +140,8 @@ SELECT TRIM(LEFT(source_code, 50)),
         author_comment,
         change_required
 FROM all_mappings
-WHERE NULLIF (TRIM (LEFT (source_concept_code, 50)), '') IS NOT NULL
-  AND TRIM (decision) = '1';
+WHERE NULLIF (TRIM (LEFT (source_code, 50)), '') IS NOT NULL
+  AND TRIM decision = 1;
 
 SELECT COUNT(*)
 FROM temp.source_to_update;

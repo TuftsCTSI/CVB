@@ -1,9 +1,3 @@
-/*
----------  ----------  ----------  ----------  ----------
--- CRITICAL INSERT BLOCK
----------  ----------  ----------  ----------  ----------
- */
-
 
 INSERT INTO vocab.concept(concept_id,
                           concept_name,
@@ -288,7 +282,7 @@ FROM temp.s2c_special_update mu
 
 
 UPDATE vocab.vocabulary 
-SET vocabulary_version = REPLACE(CONCAT('B2AI_', now()::timestamp::text), ' ', '_')
+SET vocabulary_version = REPLACE(CONCAT('GIS_', now()::timestamp::text), ' ', '_')
 WHERE vocabulary_id = 'None';
 
 INSERT INTO vocab.concept_synonym (concept_id,
@@ -304,8 +298,8 @@ SELECT * FROM vocab.mapping_metadata_staging;
 
 UPDATE vocab.vocabulary
 SET vocabulary_version = now()::date
-WHERE vocabulary_id = 'B2AI';
+WHERE vocabulary_id IN ('OMOP SDOH', 'OMOP Exposome', 'OMOP GIS');
 
 UPDATE vocab.concept
 SET valid_start_date = now()::date
-WHERE concept_id = 2147483647;
+WHERE concept_id IN (2052499999, 2052499998, 2052499997);
