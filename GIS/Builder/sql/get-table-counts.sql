@@ -7,7 +7,6 @@ with tbl as (SELECT table_schema, table_name
                                   'concept_s_staging',
                                   'concept_ns_staging',
                                   'concept_rel_s_staging',
-                                  'concept_rel_s_staging_survey',
                                   'concept_rel_ns_staging',
                                   'concept_anc_s_staging',
                                   's2c_map_staging',

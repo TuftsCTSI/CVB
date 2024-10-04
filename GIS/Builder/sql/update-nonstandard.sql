@@ -34,11 +34,11 @@ INSERT INTO vocab.concept_ns_staging (concept_id,
                                       target_concept_id,
                                       synonym,
                                       predicate_id)
-SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT COALESCE(max(concept_id),2000000000) FROM vocab.concept WHERE concept_id < 2147000000 AND concept_id > 2000000000) AS concept_id,
+SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT COALESCE(max(concept_id),2051000000) FROM vocab.concept WHERE concept_id < 2051500000 AND concept_id > 2051000000) AS concept_id,
        LEFT(cc.source_description, 255),
-       domain_id,
-       vocabulary_id,
-       concept_class_id,
+       cd.domain_id,
+       cd.vocabulary_id,
+       cd.concept_class_id,
        NULL,
        UPPER(cc.source_concept_code),
        valid_start,
@@ -48,7 +48,7 @@ SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT COALESCE(max(c
        NULLIF(cc.source_description_synonym, ''),
        predicate_id
 FROM temp.concept_check_ns cc
-         LEFT JOIN vocab.concept cd ON cc.target_concept_id = cd.concept_id;
+         INNER JOIN vocab.concept cd ON cc.target_concept_id = cd.concept_id;
 
 
 
@@ -463,10 +463,10 @@ INSERT INTO vocab.s2c_map_staging(source_code,
                                   invalid_reason)
 SELECT LEFT(replace(trim(a.concept_code), ' ', '_'), 50),
        b.concept_id,
-       source_vocabulary_id,
+       b.vocabulary_id,
        replace(a.concept_name, '''', ''),
        a.concept_id,
-       target_vocabulary_id,
+       a.vocabulary_id,
        now()::date,
        '2099-12-31'::date,
        NULL
@@ -538,9 +538,9 @@ INSERT INTO vocab.mapping_metadata_staging
 SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT count(*) FROM vocab.mapping_metadata) AS mapping_concept_id,
        CONCAT(source_concept_code, '|| - ||', source_vocabulary_id, '|| - ||', con.concept_code, '|| - ||', con.vocabulary_id) AS mapping_concept_code,
        COALESCE(confidence, 0),
-       predicate_id,
+       COALESCE(predicate_id, 'missing'),
        'sempav:manualMappingCuration',
-       'https://docs.google.com/spreadsheets/d/1EH61Y1xuNxei6CT_VcU0AeYY88Gk5aYExaF6THhzQ1U' AS mapping_provider,
+       'https://docs.google.com/spreadsheets/d/1_v1lShEJLtAhBBZEIv8fPTVKjyBOJ-NA_cibyAXMZG8' AS mapping_provider,
        1,
        'Polina Talapova',
        COALESCE(rid.id, 0),

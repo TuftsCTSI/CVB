@@ -36,9 +36,9 @@ INSERT INTO vocab.concept_s_staging (concept_id,
                                      predicate_id)
 SELECT nextval('vocab.master_id_assignment'),
        cc.source_description,
-       domain_id,
-       vocabulary_id,
-       concept_class_id,
+       source_domain_id,
+       source_vocabulary_id,
+       source_concept_class_id,
        'S',
        UPPER(cc.source_concept_code),
        valid_start,
@@ -64,8 +64,6 @@ DELETE
 FROM vocab.concept_rel_s_staging
 WHERE concept_id_1 IS NOT NULL;
 
-CREATE TABLE vocab.concept_rel_s_staging_survey AS (SELECT *
-                                                    FROM vocab.concept_rel_s_staging);
 
 CREATE TABLE temp.concept_rel_s_raw AS (SELECT *
                                         FROM vocab.concept_rel_s_staging);

@@ -131,3 +131,7 @@ CREATE TABLE temp.vocab_logger
 --     mapping_tool          TEXT NULL,
 --     mapping_tool_version  TEXT NULL
 -- );
+
+CREATE TABLE IF NOT EXISTS vocab.mapping_exceptions(concept_id integer);
+
+CREATE TABLE IF NOT EXISTS vocab.review_ids (name text, id integer);
