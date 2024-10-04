@@ -82,14 +82,14 @@ CREATE TABLE temp.gis_hierarchy
 
 CREATE TABLE temp.source_to_update
 (
-    source_concept_code                TEXT,
+    source_concept_code        TEXT,
     source_concept_id          INTEGER,
     source_vocabulary_id       TEXT,
     source_domain_id           TEXT,
     source_concept_class_id    TEXT,
     source_description         TEXT,
     source_description_synonym TEXT,
-    valid_start_date           DATE,
+    valid_start                DATE,
     relationship_id            TEXT,
     predicate_id               TEXT,
     confidence                 FLOAT8,
