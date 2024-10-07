@@ -29,6 +29,7 @@ jobs:
           apt-get install --no-install-recommends --yes postgresql-client && \
           chmod +x /tmp/runner/CVB/CVB/GIS/Builder/execute-pipeline.sh && \
           /tmp/runner/CVB/CVB/GIS/Builder/execute-pipeline.sh $PG_PASSWORD $PG_HOST
-          rm -rf /tmp/runner/CVB/CVB/GIS/Ontology && mkdir /tmp/runner/CVB/CVB/GIS/Ontology
-          cp /tmp/output/* /tmp/runner/CVB/CVB/GIS/Ontology/
-          node /tmp/runner/CVB/CVB/GIS/Builder/git-integration.js          
+        rm -rf /tmp/runner/CVB/CVB/GIS/Ontology && mkdir /tmp/runner/CVB/CVB/GIS/Ontology
+        cp /tmp/output/* /tmp/runner/CVB/CVB/GIS/Ontology/
+        node /tmp/runner/CVB/CVB/GIS/Builder/git-integration.js
+        echo "Vocab builder completed successfully. Exiting..."
