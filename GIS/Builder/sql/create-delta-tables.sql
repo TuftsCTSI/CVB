@@ -16,7 +16,7 @@ CREATE TABLE temp.concept_ancestor_delta AS (SELECT * FROM vocab.concept_ancesto
 
 CREATE TABLE temp.concept_synonym_delta AS (SELECT * FROM vocab.concept_synonym WHERE (concept_id > 2051500000 AND concept_id < 2052500000) ORDER BY concept_id);
 
-CREATE TABLE temp.domain_delta AS (SELECT * FROM vocab.domain WHERE (domain_concept_id > 2051500000 AND domain_concept_id < 2052500000) ORDER BY relationship_concept_id);
+CREATE TABLE temp.domain_delta AS (SELECT * FROM vocab.domain WHERE (domain_concept_id > 2051500000 AND domain_concept_id < 2052500000) ORDER BY domain_concept_id);
 
 CREATE TABLE temp.relationship_delta AS (SELECT * FROM vocab.relationship WHERE (relationship_concept_id > 2051500000 AND relationship_concept_id < 2052500000) ORDER BY relationship_concept_id);
 
