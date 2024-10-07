@@ -1,17 +1,17 @@
 message,count
-Standard custom concepts to insert into CONCEPT:,9906
+Standard custom concepts to insert into CONCEPT:,2
 Non-standard concept ids to insert into CONCEPT:,65
-Standard relationships to insert into CONCEPT RELATIONSHIP:,33824
-Non-standard relationships to insert into CONCEPT RELATIONSHIP:,130
-Standard hierarchy rows to insert into CONCEPT ANCESTOR:,9906
-Synonym rows to insert into CONCEPT SYNONYM:,3642
-Mapping relationships (S & NS) to insert into SOURCE TO CONCEPT MAP:,129
+Standard relationships to insert into CONCEPT RELATIONSHIP:,4
+Non-standard relationships to insert into CONCEPT RELATIONSHIP:,0
+Standard hierarchy rows to insert into CONCEPT ANCESTOR:,2
+Synonym rows to insert into CONCEPT SYNONYM:,0
+Mapping relationships (S & NS) to insert into SOURCE TO CONCEPT MAP:,64
 Mappings of existing concepts that require an update:,0
 Existing mappings that require deprecation:,0
-Smallest Standard Custom Id Assigned in Update:,2052490079
-Largest Standard Custom Id Assigned in Update:,2052499984
-Number of Custom Concept Ids to Assign:,9906
-Smallest Non-Standard Concept Id Assigned in Update:,2051000001
-Largest Non-Standard Concept Id Assigned in Update:,2051000065
+Smallest Standard Custom Id Assigned in Update:,2052490067
+Largest Standard Custom Id Assigned in Update:,2052490068
+Number of Custom Concept Ids to Assign:,2
+Smallest Non-Standard Concept Id Assigned in Update:,2051000131
+Largest Non-Standard Concept Id Assigned in Update:,2051000195
 Number of Non-Standard Concept Ids to Assign:,65
-Number of Mapping Metadata Entries to Create:,19522
+Number of Mapping Metadata Entries to Create:,0
