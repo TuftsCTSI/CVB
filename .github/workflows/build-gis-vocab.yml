@@ -29,13 +29,7 @@ jobs:
           apt-get install --no-install-recommends --yes postgresql-client && \
           chmod +x /tmp/runner/CVB/CVB/GIS/Builder/execute-pipeline.sh && \
           /tmp/runner/CVB/CVB/GIS/Builder/execute-pipeline.sh $PG_PASSWORD $PG_HOST
-          rm -rf /tmp/runner/CVB/CVB/GIS/Ontology && mkdir /tmp/runner/CVB/CVB/GIS/Ontology
-          cp /tmp/output/* /tmp/runner/CVB/CVB/GIS/Ontology/
-          git config --global user.name 'omop-vocab-builder[bot]'
-          git config --global user.email '183100713+omop-vocab-builder[bot]@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:$APP_TOKEN@github.com/$GITHUB_REPOSITORY
-          git checkout main
-          git add /tmp/runner/CVB/CVB/GIS/Ontology/*
-          git commit -am "Converted GIS Vocabulary Delta Files: `date +\"%Y-%m-%d\"`"
-          git push
-          
+        rm -rf /tmp/runner/CVB/CVB/GIS/Ontology && mkdir /tmp/runner/CVB/CVB/GIS/Ontology
+        cp /tmp/output/* /tmp/runner/CVB/CVB/GIS/Ontology/
+        node /tmp/runner/CVB/CVB/GIS/Builder/git-integration.js
+        echo "Vocab builder completed successfully. Exiting..."
