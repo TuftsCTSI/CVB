@@ -1,13 +1,10 @@
 name: GIS Vocab Build
 on:
-  schedule:
-    - cron: '15 12 * * 1-5'
   push:
     branches:
       - main
     paths:
       - 'GIS/Builder/**'
-      - '.github/build-gis-vocab.yml'
     
 jobs:
   build:
