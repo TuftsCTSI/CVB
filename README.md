@@ -7,4 +7,5 @@ Studies and projects that want to disseminate custom concept_ids can reserve a b
 |--------------|-------------------------|-----------------------|
 | ...          |                         |                       |
 | OHDSI GIS    | 2.05150                 | 2.05250               |
+| MIMIC4       | 2.06150                 | 2.06250               |
 | ...          |                         |                       |
