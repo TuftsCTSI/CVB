@@ -52,7 +52,7 @@ psql -h "$2" -d gis_vocabulary -U postgres -f "${SQL_DIRECTORY}/message-log.sql"
 psql -h "$2" -d gis_vocabulary -U postgres -f "${SQL_DIRECTORY}/create-delta-tables.sql"
 
 
-echo "-- EXECUTE THE CODE BELOW TO UPDATE YOUR VOCABULARY TABLES WITH GIS CONCEPTS" >> /tmp/output/restore.sql
+echo "-- EXECUTE THE CODE BELOW TO UPDATE YOUR VOCABULARY TABLES WITH MIMIC CONCEPTS" >> /tmp/output/restore.sql
 
 pg_dump -h "$2" -U postgres \
   --table=temp.concept_delta \
