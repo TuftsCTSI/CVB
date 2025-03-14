@@ -1,1 +1,21 @@
-dummy file
+column name,data type,description,example
+source_code_set,varchar,The human-readable description of the mapping code set ,d-items
+source_category,varchar,A description of the category or group within the source code set.,1-Intubation/Extubation
+source_code,varchar,Unique identifier for each source concept.,224385
+source_concept_id,integer,Source concept ID to be auto-generated: here predefined 0,0
+source_vocabulary_id,text,Identifies the vocabulary from which the source code is derived.,MIMIC4
+source_description,varchar,The human-readable description of the source concept.,Intubation
+relationship_id,,"Specifies the relationship between the source concept and the target concept in the OMOP model. Can be 'Subsumes', 'Maps to', 'Is a'
+'Has related context', 'Has measurement', 'Has associated procedure', 'Has associated finding')",Maps to
+predicate_id,varchar,"Relation between a source (subject) and target (object). It can be skos:exactMatch or skos:closeMatch (1-to-1 full or almost full equivalent mapping), skos:narrowMatch (mapping to child), skos:broadMatch (mapping to parent), skos:relatedMatch (mapping to something related).",skos:exactMatch
+confidence,float8,"Score between 0.0-1.0 - the confidence or probability that the match is correct, where 1 denotes total confidence",1
+target_concept_id,integer,Target standard OMOP concept id,4202832
+target_concept_name,varchar,Target standard OMOP concept name,Intubation
+target_vocabulary_id,varchar,Target standard OMOP concept vocabulary,SNOMED
+target_domain_id,varchar,Target standard OMOP concept domain,Procedure
+author_label,varchar,name of mapping author,Tom Pollard
+reviewer_label,varchar,name of reviewer or review group/team,Polina Talapova
+reviewer_comments,varchar,comments,
+mapping_justification,varchar,an action (or the written representation of that action) of showing a mapping to be right or reasonable,
+mapping_tool,varchar,represents an individual mapping tool,
+mapping_tool_version,varchar,description of an instrument used for mapping,
