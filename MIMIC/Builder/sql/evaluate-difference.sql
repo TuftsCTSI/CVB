@@ -14,8 +14,8 @@ CREATE TABLE temp.CONCEPT_CHECK_S AS
                          WHERE (concept_id > 2061500000 AND concept_id < 2062500000)
                            AND standard_concept = 'S') co
                         ON TRIM(UPPER(sc.source_concept_code)) = TRIM(UPPER(co.concept_code))) a
-     WHERE a.source_concept_class_id != 'Suppl Concept'
-     AND a.concept_name IS NULL);
+     WHERE a.predicate_id = 'skos:noMatch'
+     OR a.source_description NOT IN (SELECT source_description FROM temp.source_to_update WHERE predicate_id = 'skos:exactMatch'));
 
 
 -- TRACK ALL CUSTOM REQUESTS
