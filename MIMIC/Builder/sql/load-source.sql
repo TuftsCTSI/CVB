@@ -16,7 +16,7 @@ WITH all_mappings AS (
                                 target_vocabulary_id,
                                 target_domain_id,
                                 1 AS decision,
-                                NULL AS review_date,
+                                NULL::date AS review_date,
                                 reviewer_label AS reviewer_name,
                                 NULL AS reviewer_specialty,
                                 reviewer_comments AS reviewer_comment,
@@ -25,7 +25,7 @@ WITH all_mappings AS (
                                 'Completed' AS status,
                                 NULL AS author_comment,
                                 NULL AS change_required
-                         FROM temp.gis_mapping
+                         FROM temp.mimic_mapping
                      )
 
 INSERT
