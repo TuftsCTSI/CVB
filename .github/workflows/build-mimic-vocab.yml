@@ -5,6 +5,8 @@ on:
       - main
     paths:
       - 'MIMIC/Builder/**'
+      - 'MIMIC/Mappings/**'
+      - '.github/workflows/build-mimic-vocab.yml'
     
 jobs:
   build:
