@@ -11310,5 +11310,3 @@ MIMIC4WDB,Waveform-Derived Measurement,V1,0,MIMIC4,V1,Has relat context,skos:rel
 MIMIC4WDB,Waveform-Derived Measurement,V2,0,MIMIC4,V2,Has relat context,skos:relatedMatch,1,4105372,Lead site V2,SNOMED,Spec Anatomic Site,Manlik Kwong,Polina Talapova,,semapv:ManualMappingCuration,,
 MIMIC4WDB,Waveform-Derived Measurement,V3,0,MIMIC4,V3,Has relat context,skos:relatedMatch,1,4107145,Lead site V3,SNOMED,Spec Anatomic Site,Manlik Kwong,Polina Talapova,,semapv:ManualMappingCuration,,
 MIMIC4WDB,Waveform-Derived Measurement,V5,0,MIMIC4,V5,Has relat context,skos:relatedMatch,1,4107146,Lead site V5,SNOMED,Spec Anatomic Site,Manlik Kwong,Polina Talapova,,semapv:ManualMappingCuration,,
-,,,,,,,,,,,,,,,,,,
-PSYCH,SURVEY,CIRC Behavior,0,PSYCHWG,Circulation Behavior [OMAHA],Has Answer,skos:relatedMatch,1,INTERNAL,Special Behavior,PSYCHWG,Meas Value,Jared,Jared,This is a demo ,,,
