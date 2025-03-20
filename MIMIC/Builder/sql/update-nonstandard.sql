@@ -450,7 +450,8 @@ FROM temp.concept_check_ns_raw ns
     INNER JOIN vocab.concept con
         ON ns.target_concept_id = con.concept_id
 WHERE con.standard_concept = 'S'
-      AND b.concept_id IS NOT NULL;
+      AND b.concept_id IS NOT NULL
+      AND trim(lower(ns.predicate_id)) =  'skos:exactmatch';
 
 INSERT INTO vocab.s2c_map_staging(source_code,
                                   source_concept_id,

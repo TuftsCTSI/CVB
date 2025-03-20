@@ -2,6 +2,8 @@ DROP TABLE IF EXISTS temp.concept_delta;
 DROP TABLE IF EXISTS temp.concept_relationship_delta;
 DROP TABLE IF EXISTS temp.concept_ancestor_delta;
 DROP TABLE IF EXISTS temp.concept_synonym_delta;
+DROP TABLE IF EXISTS temp.domain_delta;
+DROP TABLE IF EXISTS temp.relationship_delta;
 DROP TABLE IF EXISTS temp.vocabulary_delta;
 DROP TABLE IF EXISTS temp.concept_class_delta;
 DROP TABLE IF EXISTS temp.source_to_concept_map_delta;

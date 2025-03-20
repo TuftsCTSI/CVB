@@ -1,5 +1,6 @@
 WITH all_mappings AS (
-                         SELECT source_code,
+                         SELECT source_code_set,
+                                source_code,
                                 source_concept_id,
                                 source_vocabulary_id,
                                 target_domain_id AS source_domain_id,
@@ -56,7 +57,7 @@ INTO temp.source_to_update   (
                                 status,
                                 author_comment,
                                 change_required)
-SELECT TRIM(LEFT(source_code, 50)),
+SELECT TRIM(LEFT(CONCAT(source_code_set, '|', 'source_code'), 50)),
         NULL AS source_concept_id,
         source_vocabulary_id,
         source_domain_id,
@@ -83,7 +84,8 @@ SELECT TRIM(LEFT(source_code, 50)),
         author_comment,
         change_required
 FROM all_mappings
-WHERE NULLIF (TRIM (LEFT (source_code, 50)), '') IS NOT NULL;
+WHERE NULLIF (TRIM (LEFT (source_code, 50)), '') IS NOT NULL
+AND NULLIF (TRIM (LEFT (source_description, 50)), '') IS NOT NULL ;
 
 SELECT COUNT(*)
 FROM temp.source_to_update;

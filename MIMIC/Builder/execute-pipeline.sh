@@ -61,8 +61,6 @@ pg_dump -h "$2" -U postgres \
   --table=temp.concept_ancestor_delta \
   --table=temp.vocabulary_delta \
   --table=temp.concept_class_delta \
-  --table=temp.relationship_delta \
-  --table=temp.domain_delta \
   --table=temp.source_to_concept_map_delta \
   --table=temp.mapping_metadata_delta \
   --column-inserts postgres >> /tmp/output/restore.sql
