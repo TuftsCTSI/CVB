@@ -1,3 +1,3 @@
 vocabulary_id,vocabulary_name,vocabulary_reference,vocabulary_version,vocabulary_concept_id
-MIMIC4,MIMIC4 Custom Terminology,OMOP generated,2025-03-20,2062499999
-None,OMOP Standardized Vocabularies,OMOP generated,MIMIC4_2025-03-20_15:20:37.253965,44819096
+MIMIC4,MIMIC4 Custom Terminology,OMOP generated,2025-03-21,2062499999
+None,OMOP Standardized Vocabularies,OMOP generated,MIMIC4_2025-03-21_08:16:25.816918,44819096
