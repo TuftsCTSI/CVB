@@ -81,7 +81,7 @@ SELECT TRIM(LEFT (source_concept_code, 50)),
     author_comment,
     change_required
 FROM all_mappings
-WHERE NULLIF (TRIM (LEFT (source_code, 50)),'') IS NOT NULL
+WHERE NULLIF (TRIM (LEFT (source_concept_code, 50)),'') IS NOT NULL
   AND NULLIF (TRIM (LEFT (source_description, 50)), '') IS NOT NULL;
 
 SELECT COUNT(*)
