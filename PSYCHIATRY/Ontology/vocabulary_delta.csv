@@ -1,0 +1,3 @@
+vocabulary_id,vocabulary_name,vocabulary_reference,vocabulary_version,vocabulary_concept_id
+None,OMOP Standardized Vocabularies,OMOP generated,MIMIC4_2025-04-01_09:52:22.61895,44819096
+PSYCHIATRY,PSYCHIATRY Custom Terminology,OMOP generated,2025-04-01,2072499999
