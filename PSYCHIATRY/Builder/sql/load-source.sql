@@ -1,7 +1,7 @@
 WITH all_mappings AS (SELECT source_concept_code,
                              source_concept_id,
                              source_vocabulary_id,
-                             target_domain_id AS source_domain_id, --fixme
+                             COALESCE(target_domain_id, 'Metadata') AS source_domain_id, --fixme
                              'Suppl Concept'  AS source_concept_class_id,
                              source_description,
                              source_description_synonym,
