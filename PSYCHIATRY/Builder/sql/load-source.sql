@@ -23,7 +23,7 @@ WITH all_mappings AS (SELECT source_concept_code,
                              reviewer_affiliation_name,
                              status,
                              author_comment,
-                             change_required,
+                             change_required
                       FROM temp.psych_mapping)
 
 INSERT
