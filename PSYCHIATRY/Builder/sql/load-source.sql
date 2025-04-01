@@ -1,8 +1,8 @@
 WITH all_mappings AS (SELECT source_concept_code,
                              source_concept_id,
                              source_vocabulary_id,
-                             target_domain_id AS source_domain_id,
-                             NULL AS source_concept_class_id,
+                             target_domain_id AS source_domain_id, --fixme
+                             'Suppl Concept'  AS source_concept_class_id,
                              source_description,
                              source_description_synonym,
                              CURRENT_DATE AS valid_start_date,
@@ -31,8 +31,8 @@ INTO temp.source_to_update   (
                                 source_concept_code,
                                 source_concept_id,
                                 source_vocabulary_id,
-                                target_domain_id AS source_domain_id, --fix me
-                                NULL AS source_concept_class_id,
+                                source_domain_id,
+                                source_concept_class_id,
                                 source_description,
                                 source_description_synonym,
                                 valid_start,
