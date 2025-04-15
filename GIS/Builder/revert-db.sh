@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-export SQL_DIRECTORY="/opt/etl/CVB/GIS/Builder/sql"
-export MAP_DIRECTORY="/opt/etl/CVB/GIS/Mappings"
+export SQL_DIRECTORY="${RUNNER_WORKDIR}/CVB/CVB/GIS/Builder/sql"
+export MAP_DIRECTORY="${RUNNER_WORKDIR}/CVB/CVB/GIS/Mappings"
 
 # Remove all additions from db
 psql -h "$2" -d gis_vocabulary -U postgres -f "${SQL_DIRECTORY}/hard-reset.sql"

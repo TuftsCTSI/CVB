@@ -1,11 +1,11 @@
- #!/bin/bash
+#!/bin/bash
 
 rm -rf /tmp/output
 
 mkdir /tmp/output
 
-export SQL_DIRECTORY="/opt/etl/CVB/GIS/Builder/sql"
-export MAP_DIRECTORY="/opt/etl/CVB/GIS/Mappings"
+export SQL_DIRECTORY="${RUNNER_WORKDIR}/CVB/CVB/GIS/Builder/sql"
+export MAP_DIRECTORY="${RUNNER_WORKDIR}/CVB/CVB/GIS/Mappings"
 
 
 # ONLY EXECUTE ON FIRST RUN!
