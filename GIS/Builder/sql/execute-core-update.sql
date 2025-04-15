@@ -56,7 +56,9 @@ SELECT concept_id_1,
        valid_start_date,
        valid_end_date,
        invalid_reason
-FROM vocab.concept_rel_s_staging;
+FROM vocab.concept_rel_s_staging
+WHERE concept_id_1 IS NOT NULL
+AND concept_id_2 IS NOT NULL;
 
 -- PREVENT OVERLAP BETWEEN S and NS CONC REL UPDATES
 
@@ -112,7 +114,8 @@ SELECT source_code,
        valid_start_date,
        valid_end_date,
        invalid_reason
-FROM vocab.s2c_map_staging;
+FROM vocab.s2c_map_staging
+ON CONFLICT DO NOTHING;
 
 
 /*

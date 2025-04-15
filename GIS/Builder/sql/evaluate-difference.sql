@@ -14,9 +14,8 @@ CREATE TABLE temp.CONCEPT_CHECK_S AS
                          WHERE (concept_id > 2051500000 AND concept_id < 2052500000)
                            AND standard_concept = 'S') co
                         ON TRIM(UPPER(sc.source_concept_code)) = TRIM(UPPER(co.concept_code))) a
-     WHERE a.source_concept_class_id != 'Suppl Concept'
-     AND a.concept_name IS NULL);
-
+     WHERE a.source_description NOT IN (SELECT source_description FROM temp.source_to_update WHERE predicate_id = 'skos:exactMatch')
+           AND a.concept_name IS NULL AND a.source_domain_id IS NOT NULL);
 
 -- TRACK ALL CUSTOM REQUESTS
 CREATE TABLE temp.SRC_DESC_MATCH AS (
@@ -24,10 +23,16 @@ CREATE TABLE temp.SRC_DESC_MATCH AS (
     FROM temp.CONCEPT_CHECK_S
 );
 
-CREATE TABLE temp.CONCEPT_CHECK_S_RAW AS (
-    SELECT *
-    FROM temp.CONCEPT_CHECK_S
-);
+CREATE TABLE temp.CONCEPT_CHECK_S_RAW AS
+    (SELECT *
+     FROM (SELECT * FROM temp.source_to_update sc
+              LEFT JOIN (SELECT *
+                         FROM vocab.CONCEPT
+                         WHERE (concept_id > 2051500000 AND concept_id < 2052500000)
+                           AND standard_concept = 'S') co
+                        ON TRIM(UPPER(sc.source_concept_code)) = TRIM(UPPER(co.concept_code))) a
+     WHERE a.source_description NOT IN (SELECT source_description FROM temp.source_to_update WHERE predicate_id = 'skos:exactMatch')
+           AND a.concept_name IS NULL);
 
 -- RETAIN ONLY UNIQUE SOURCE DESCRIPTIONS FOR STANDARD ID ASSIGNMENT
 DELETE
@@ -39,7 +44,6 @@ FROM temp.CONCEPT_CHECK_S a USING (
 ) b
 WHERE a.source_description = b.source_description
   AND a.ctid <> b.ctid;
-
 
 
 -- REMOVE UNIQUE STANDARDS FROM SUGGESTED NAME DUPLICATES
@@ -80,14 +84,8 @@ CREATE TABLE temp.concept_check_ns_raw AS
     SELECT * FROM temp.concept_check_ns;
 
 DELETE
-FROM temp.CONCEPT_CHECK_NS a USING (
-    SELECT MIN(ctid) as ctid, source_description
-    FROM temp.CONCEPT_CHECK_NS
-    GROUP BY source_description
-    HAVING COUNT(*) > 1
-) b
-WHERE a.source_description = b.source_description
-  AND a.ctid <> b.ctid;
+FROM temp.CONCEPT_CHECK_NS a
+WHERE a.source_domain_id IS NULL;
 
 DELETE
 FROM temp.CONCEPT_CHECK_NS

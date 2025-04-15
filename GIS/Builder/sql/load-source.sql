@@ -30,7 +30,7 @@ WITH all_mappings AS (
                          SELECT source_code,
                                 source_concept_id,
                                 source_vocabulary_id,
-                                target_domain_id AS source_domain_id,
+                                NULL AS source_domain_id,
                                 'Suppl Concept'  AS source_concept_class_id,
                                 source_description,
                                 NULL             AS source_description_synonym,
@@ -54,34 +54,34 @@ WITH all_mappings AS (
                                 change_required
                          FROM temp.gis_mapping
                          -- To add once first IDs are assigned
---                          UNION ALL
---                          SELECT source_code,
---                                 source_concept_id,
---                                 source_vocabulary_id,
---                                 target_domain_id AS source_domain_id,
---                                 'Suppl Concept' AS source_concept_class_id,
---                                 source_description,
---                                 NULL AS source_description_synonym,
---                                 now()::date valid_start_date,
---                                 relationship_id,
---                                 predicate_id,
---                                 confidence,
---                                 target_concept_id,
---                                 target_concept_code,
---                                 target_concept_name,
---                                 target_vocabulary_id,
---                                 target_domain_id,
---                                 decision,
---                                 review_date,
---                                 reviewer_name,
---                                 reviewer_specialty,
---                                 reviewer_comment,
---                                 orcid_id,
---                                 reviewer_affiliation_name,
---                                 status,
---                                 author_comment,
---                                 change_required
---                          FROM temp.gis_hierarchy
+                          UNION ALL
+                          SELECT source_code,
+                                 source_concept_id,
+                                 source_vocabulary_id,
+                                 NULL AS source_domain_id,
+                                 'Suppl Concept' AS source_concept_class_id,
+                                 source_description,
+                                 NULL AS source_description_synonym,
+                                 now()::date valid_start_date,
+                                 relationship_id,
+                                 predicate_id,
+                                 confidence,
+                                 target_concept_id,
+                                 target_concept_code,
+                                 target_concept_name,
+                                 target_vocabulary_id,
+                                 target_domain_id,
+                                 decision,
+                                 review_date,
+                                 reviewer_name,
+                                 reviewer_specialty,
+                                 reviewer_comment,
+                                 orcid_id,
+                                 reviewer_affiliation_name,
+                                 status,
+                                 author_comment,
+                                 change_required
+                          FROM temp.gis_hierarchy
 
                      )
 
@@ -120,11 +120,13 @@ SELECT TRIM(LEFT(source_code, 50)),
         source_concept_class_id,
         LEFT(source_description, 255),
         LEFT(source_description_synonym, 255),
-        valid_start_date,
+        a.valid_start_date,
         relationship_id,
         predicate_id,
         confidence::FLOAT,
-        target_concept_id::integer,
+        CASE WHEN COALESCE(target_concept_id::integer, 0) != 0 THEN target_concept_id::integer
+              ELSE COALESCE(cjoin.concept_id, 0)
+        END AS target_concept_id,
         target_concept_code,
         target_concept_name,
         target_vocabulary_id,
@@ -139,7 +141,9 @@ SELECT TRIM(LEFT(source_code, 50)),
         status,
         author_comment,
         change_required
-FROM all_mappings
+FROM all_mappings a
+    LEFT JOIN vocab.concept cjoin
+        ON UPPER(TRIM(a.target_concept_code)) = UPPER(TRIM(cjoin.concept_code))
 WHERE NULLIF (TRIM (LEFT (source_code, 50)), '') IS NOT NULL
   AND decision = 1;
 

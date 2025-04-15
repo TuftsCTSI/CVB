@@ -57,6 +57,15 @@ FROM vocab.concept_rel_s_staging
 WHERE concept_id_2 IN (SELECT concept_id from vocab.mapping_exceptions)
    OR concept_id_1 IN (SELECT concept_id from vocab.mapping_exceptions);
 
+DELETE
+FROM vocab.concept_rel_s_staging
+WHERE concept_id_2 IS NULL
+   OR concept_id_1 IS NULL;
+
+DELETE
+FROM vocab.concept_rel_s_staging
+WHERE concept_id_2 = 0
+   OR concept_id_1 = 0;
 
 
 DELETE
@@ -68,6 +77,11 @@ DELETE
 FROM vocab.concept_rel_ns_staging
 WHERE concept_id_2 IS NULL
    OR concept_id_1 IS NULL;
+
+DELETE
+FROM vocab.concept_rel_ns_staging
+WHERE concept_id_2 = 0
+   OR concept_id_1 = 0;
 
 DELETE
 FROM temp.mapping_to_update a USING (SELECT * FROM vocab.concept_rel_ns_staging) b

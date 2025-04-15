@@ -34,7 +34,7 @@ INSERT INTO vocab.concept_ns_staging (concept_id,
                                       target_concept_id,
                                       synonym,
                                       predicate_id)
-SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT COALESCE(max(concept_id),2051000000) FROM vocab.concept WHERE concept_id < 2051500000 AND concept_id > 2051000000) AS concept_id,
+SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT COALESCE(max(concept_id),2051500000) FROM vocab.concept WHERE concept_id < 2052000000 AND concept_id > 2051500000) AS concept_id,
        LEFT(cc.source_description, 255),
        cd.domain_id,
        cd.vocabulary_id,
@@ -547,16 +547,29 @@ SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT count(*) FROM 
        reviewer_name,
        'Google Sheet Workflow',
        'v1.0'
-FROM temp.source_to_update stu
-    LEFT JOIN vocab.concept con
+FROM (SELECT * FROM temp.source_to_update s) stu
+    INNER JOIN vocab.concept con
         ON con.concept_id = stu.target_concept_id
     LEFT JOIN vocab.review_ids rid
         ON trim(lower(stu.reviewer_name)) = trim(lower(rid.name))
-WHERE CONCAT(source_concept_code, '|| - ||', source_vocabulary_id, '|| - ||', con.concept_code, '|| - ||', con.vocabulary_id)
-          NOT IN (SELECT mapping_concept_code FROM vocab.mapping_metadata)
+WHERE stu.target_concept_id != 0
+AND stu.target_concept_id IS NOT NULL
 ;
 
 
+DELETE
+FROM vocab.mapping_metadata_staging a USING (
+    SELECT MIN(ctid) as ctid, mapping_concept_code
+    FROM vocab.mapping_metadata_staging
+    GROUP BY mapping_concept_code
+    HAVING COUNT(*) > 1
+) b
+WHERE a.mapping_concept_code = b.mapping_concept_code
+  AND a.ctid <> b.ctid;
+
+DELETE
+FROM vocab.mapping_metadata_staging a
+WHERE mapping_concept_code IN (SELECT mapping_concept_code FROM vocab.mapping_metadata);
 
 
 INSERT INTO temp.vocab_logger(log_desc, log_count)
