@@ -12,6 +12,7 @@ CREATE TABLE temp.mimic_mapping
     source_concept_id     INTEGER,
     source_vocabulary_id  TEXT,
     source_description    TEXT,
+    source_description_synonym  TEXT,
     relationship_id       TEXT,
     predicate_id          TEXT,
     confidence            TEXT,

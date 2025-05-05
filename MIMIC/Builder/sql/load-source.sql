@@ -6,7 +6,7 @@ WITH all_mappings AS (
                                 source_domain AS source_domain_id,
                                 'Suppl Concept'  AS source_concept_class_id,
                                 source_description,
-                                NULL             AS source_description_synonym,
+                                source_description_synonym   AS source_description_synonym,
                                 now()::date valid_start_date,
                                 relationship_id,
                                 predicate_id,
