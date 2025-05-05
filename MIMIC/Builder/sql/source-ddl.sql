@@ -7,6 +7,7 @@ CREATE TABLE temp.mimic_mapping
 (
     source_code_set       TEXT,
     source_category       TEXT,
+    source_domain         TEXT,
     source_code           TEXT,
     source_concept_id     INTEGER,
     source_vocabulary_id  TEXT,

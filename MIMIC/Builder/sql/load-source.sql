@@ -3,7 +3,7 @@ WITH all_mappings AS (
                                 source_code,
                                 source_concept_id,
                                 source_vocabulary_id,
-                                target_domain_id AS source_domain_id,
+                                source_domain AS source_domain_id,
                                 'Suppl Concept'  AS source_concept_class_id,
                                 source_description,
                                 NULL             AS source_description_synonym,
