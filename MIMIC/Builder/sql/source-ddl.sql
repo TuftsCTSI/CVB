@@ -48,6 +48,7 @@ CREATE TABLE temp.source_to_update
     target_domain_id           TEXT,
     decision                   INTEGER,
     review_date                DATE,
+    author_name                TEXT,
     reviewer_name              TEXT,
     reviewer_specialty         TEXT,
     reviewer_comment           TEXT,
