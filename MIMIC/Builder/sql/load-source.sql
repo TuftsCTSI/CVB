@@ -57,7 +57,7 @@ INTO temp.source_to_update   (
                                 status,
                                 author_comment,
                                 change_required)
-SELECT TRIM(LEFT(CONCAT(source_code_set, '|', source_code), 50)),
+SELECT TRIM(LEFT(source_code, 50)),
         NULL AS source_concept_id,
         source_vocabulary_id,
         source_domain_id,
