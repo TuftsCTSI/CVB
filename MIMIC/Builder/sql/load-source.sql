@@ -12,7 +12,7 @@ WITH all_mappings AS (
                                 predicate_id,
                                 confidence,
                                 target_concept_id,
-                                NULL             AS target_concept_code,
+                                NULL AS target_concept_code,
                                 target_concept_name,
                                 target_vocabulary_id,
                                 target_domain_id,
@@ -59,18 +59,18 @@ INTO temp.source_to_update   (
                                 status,
                                 author_comment,
                                 change_required)
-SELECT  source_code,
-        NULL AS source_concept_id,
+SELECT  LEFT(source_code, 50) AS source_concept_code, -- constrained by destination field length
+        NULL::INTEGER AS source_concept_id,
         source_vocabulary_id,
         source_domain_id,
         source_concept_class_id,
-        LEFT(source_description, 255),
-        LEFT(source_description_synonym, 255),
+        LEFT(source_description, 255), --  aligns with VARCHAR(255)
+        LEFT(source_description_synonym, 1000),-- aligns with VARCHAR(1000) for concept_synonym_name
         valid_start_date,
         relationship_id,
         predicate_id,
         confidence::FLOAT,
-        target_concept_id::integer,
+        target_concept_id::INTEGER,
         target_concept_code,
         target_concept_name,
         target_vocabulary_id,
@@ -87,8 +87,8 @@ SELECT  source_code,
         author_comment,
         change_required
 FROM all_mappings
-WHERE NULLIF (TRIM (LEFT (source_code, 50)), '') IS NOT NULL
-AND NULLIF (TRIM (LEFT (source_description, 50)), '') IS NOT NULL ;
+WHERE NULLIF(TRIM(source_code), '') IS NOT NULL
+AND NULLIF(TRIM(source_description), '') IS NOT NULL;
 
 SELECT COUNT(*)
 FROM temp.source_to_update;
