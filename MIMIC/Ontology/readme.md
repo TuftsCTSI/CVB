@@ -40,7 +40,7 @@ Ensure your OMOP vocabulary schema includes the following standard CDM tables:
 
 > Use the [DevV5_DDL.sql script](https://github.com/OHDSI/Vocabulary-v5.0/blob/master/working/DevV5_DDL.sql) if tables are missing.
 
-Create delta tables using [delta-tables-ddl](sqlhttps://github.com/TuftsCTSI/CVB/tree/main/MIMIC/Builder/sql/delta-tables-ddl.sql).
+Create delta tables using [delta-tables-ddl.sql](https://github.com/TuftsCTSI/CVB/tree/main/MIMIC/Builder/sql/delta-tables-ddl.sql).
 
 ---
 
