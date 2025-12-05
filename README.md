@@ -9,6 +9,7 @@ Studies and projects that want to disseminate custom concept_ids can reserve a b
 | OHDSI GIS    | 2.05150                 | 2.05250               |
 | MIMIC4       | 2.06150                 | 2.06250               |
 | PSYCHIATRY   | 2.07150                 | 2.07250               |
+| WAVEFORM     | 2.08150                 | 2.08250               |
 | ...          |                         |                       |
 
 ## Repository Structure
