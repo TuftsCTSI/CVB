@@ -8,6 +8,8 @@ CREATE TABLE temp.wave_mapping
     source_concept_code        TEXT,
     source_concept_id          INTEGER,
     source_vocabulary_id       TEXT,
+    source_domain_id           TEXT,
+    source_concept_class_id    TEXT,
     source_description         TEXT,
     source_description_synonym TEXT,
     valid_start_date           TEXT,
