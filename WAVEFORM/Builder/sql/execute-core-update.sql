@@ -92,7 +92,8 @@ SELECT ancestor_concept_id,
        descendant_concept_id,
        min_levels_of_separation,
        max_levels_of_separation
-FROM vocab.concept_anc_s_staging;
+FROM vocab.concept_anc_s_staging
+ON CONFLICT DO NOTHING;
 
 INSERT INTO vocab.source_to_concept_map(source_code,
                                         source_concept_id,

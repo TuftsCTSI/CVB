@@ -1,0 +1,34 @@
+name: WAVEFORM Vocab Build
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'WAVEFORM/Builder/**'
+      - 'WAVEFORM/Mappings/**'
+      - '.github/workflows/build-waveform-vocab.yml'
+    
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - name: Generate a token
+      id: generate-token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ vars.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    - uses: actions/checkout@v2
+    - name: build vocabulary
+      env:
+        APP_TOKEN: ${{ steps.generate-token.outputs.token }}
+      run: |
+        echo "Launching vocab builder..." && \
+          apt-get update && \
+          apt-get install --no-install-recommends --yes postgresql-client && \
+          chmod +x /tmp/runner/CVB/CVB/WAVEFORM/Builder/execute-pipeline.sh && \
+          /tmp/runner/CVB/CVB/WAVEFORM/Builder/execute-pipeline.sh $PG_PASSWORD $PG_HOST
+        rm -rf /tmp/runner/CVB/CVB/WAVEFORM/Ontology && mkdir /tmp/runner/CVB/CVB/WAVEFORM/Ontology
+        cp /tmp/output/* /tmp/runner/CVB/CVB/WAVEFORM/Ontology/
+        node /tmp/runner/CVB/CVB/WAVEFORM/Builder/git-integration.js
+        echo "Vocab builder completed successfully. Exiting..."
