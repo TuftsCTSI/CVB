@@ -48,8 +48,8 @@ SELECT row_number() OVER (ORDER BY source_concept_code) + (SELECT COALESCE(max(c
        NULLIF(cc.source_description_synonym, ''),
        predicate_id
 FROM temp.concept_check_ns cc
-         INNER JOIN vocab.concept cd ON cc.target_concept_id = cd.concept_id;
--- Note that the inner join above will only create NS concepts for those with a mapping to an existing standard
+         INNER JOIN (SELECT * FROM vocab.concept WHERE concept_id != 0) cd ON cc.target_concept_id = cd.concept_id;
+-- Note that the inner join above will only create NS concepts for those with a mapping to an existing non-zero concept
 
 
 /*
