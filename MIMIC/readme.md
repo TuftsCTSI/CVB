@@ -2,21 +2,82 @@
 
 ## Overview
 
-**MIMIC-IV** (Medical Information Mart for Intensive Care IV) is a publicly available critical care database developed by the MIT Laboratory for Computational Physiology. It contains de-identified clinical data associated with over 60,000 ICU admissions. Integration with the **OMOP Common Data Model (CDM)** enables its use in large-scale observational research, allowing comparisons with other OMOP-compatible datasets.
+This folder contains the **MIMIC-IV** vocabulary integration package for loading curated
+MIMIC source concepts and mappings into an **OMOP Common Data Model** vocabulary
+schema.
 
-Previous efforts have mapped subsets of MIMIC-IV data to OMOP CDM, such as those by Odysseus, PhysioNet collaborators, and academic contributors. This work expands on those efforts and supports the **NIH Bridge2AI Clinical Care CHoRUS Project**, where high-quality, semantically interoperable data is a core objective.
+MIMIC-IV is a publicly available critical care database developed by the MIT
+Laboratory for Computational Physiology. Integrating MIMIC-IV source terms with
+OMOP CDM vocabulary tables supports reproducible ICU research, cross-site
+observational analytics, and downstream ETL into standard OMOP clinical event
+tables.
 
----
+This work extends earlier MIMIC-to-OMOP mapping efforts and supports the **NIH
+Bridge2AI Clinical Care CHoRUS Project**, where semantically interoperable critical
+care data is a core requirement.
+
+## Current Package Snapshot
+
+The current repository state represents a refreshed MIMIC4 vocabulary package.
+
+| Item | Current value |
+|---|---:|
+| Source mapping rows in `Mappings/mimic_mapping.csv` | 26,916 |
+| Distinct MIMIC4 source concept rows represented in mapping file | 24,394 |
+| MIMIC4 concepts in `Ontology/concept_delta.csv` | 24,394 |
+| Standard MIMIC4 concepts | 2,323 |
+| Non-standard MIMIC4 concepts | 22,071 |
+| Registered concept classes in `Ontology/concept_class_delta.csv` | 39 |
+| Mapping metadata rows | 26,696 |
+| Source-to-concept-map rows | 26,181 |
+| Concept relationship delta rows, including inverse relationships | 58,038 |
+| Concept synonym rows | 12,024 |
+| MIMIC4 vocabulary version | 2026-05-28 |
+
+Important interpretation notes:
+
+- `Mappings/mimic_mapping.csv` is the full curation layer. It includes mapping,
+  hierarchy, attribute, blank, and invalid or junk rows.
+- `Ontology/source_to_concept_map.csv` is the ETL-facing mapping export. It keeps
+  only `Maps to` and `Maps to value` rows.
+- `Ontology/concept_relationship_delta.csv` includes forward and reverse
+  relationship rows, so its count is intentionally larger than the curation
+  mapping count.
+- `Ontology/domain_delta.csv` and `Ontology/relationship_delta.csv` are
+  header-only in this snapshot. No new OMOP domains or relationship types are
+  introduced by those files.
+- All active concept and relationship rows in this snapshot have
+  `valid_end_date = 2099-12-31` and blank `invalid_reason`.
+
+## Folder Contents
+
+| Path | Purpose |
+|---|---|
+| `MIMIC/readme.md` | Top-level package documentation and current artifact summary. |
+| `MIMIC/Mappings/mimic_mapping.csv` | Source mapping table used for curation, review, and generation of ontology deltas. |
+| `MIMIC/Ontology/*.csv` | Generated vocabulary delta, metadata, and ETL mapping outputs. |
+| `MIMIC/Ontology/readme.md` | Upload-oriented instructions for integrating delta tables into an OMOP vocabulary schema. |
+| `MIMIC/Builder/sql/*.sql` | SQL scripts for staging, loading, comparing, updating, and reverting vocabulary deltas. |
+| `MIMIC/Builder/execute-pipeline.sh` | Pipeline entry point for executing the vocabulary build workflow. |
+| `MIMIC/Builder/revert-db.sh` | Revert helper for database state management. |
+| `MIMIC/Builder/git-integration.js` | Git integration helper for automation. |
+| `MIMIC/Utilities/daily-update.gs` | Google Apps Script utility used by the mapping workflow. |
+
 
 ## Sources Utilized
 
-The mapping and vocabulary enrichment effort integrated multiple authoritative and community-curated sources:
+The mapping and vocabulary enrichment effort integrates authoritative,
+community-curated, and manually reviewed inputs:
 
 - [MIMIC-IV v3.1](https://physionet.org/content/mimiciv/3.1/)
 - [MIMIC-IV Demo v2.2](https://physionet.org/content/mimic-iv-demo/2.2/#files-panel)
 - [MIMIC-IV Waveform Database v0.1.0](https://www.physionet.org/content/mimic4wdb/0.1.0/)
-- [OHDSI GitHub: Custom MIMIC Mapping Files](https://github.com/OHDSI/MIMIC/tree/main/custom_mapping_csv)
+- [OHDSI GitHub MIMIC custom mapping files](https://github.com/OHDSI/MIMIC/tree/main/custom_mapping_csv)
 - MIMIC-IV code counts provided by Tufts CTSI
+- Manual curation by Polina Talapova
+- Candidate maps derived from prior MIMIC-IV and waveform mapping work,
+  including contributions associated with Tom Pollard, Abdulrahman Chahin,
+  the Odysseus Vocabulary Team, Manlik Kwong and SciForce Team.
 
 ### Mapping Sources
 
@@ -26,6 +87,7 @@ The mapping and vocabulary enrichment effort integrated multiple authoritative a
   - MIMIC-IV v2.0 (Abdulrahman Chahin)
   - MIMIC-IV v2.0 (Odysseus Vocabulary Team)
   - MIMIC-IV Waveform DB 0.1.0 (Manlik Kwong)
+  - MIMIC-IV v2.0 (SciForce Team)
 ---
 
 ## Transformation Workflow
@@ -56,158 +118,223 @@ The mapping and vocabulary enrichment effort integrated multiple authoritative a
    - Azure Flexible PostgreSQL server with vocabulary constraints and indexes
 
 ---
+
+## Mapping Source Table
+
+`Mappings/mimic_mapping.csv` is the primary curation input.
+
+Current curation-level relationship counts:
+
+| Relationship | Rows |
+|---|---:|
+| Maps to | 22,654 |
+| Is a | 1,319 |
+| Maps to value | 1,204 |
+| Has relat context | 762 |
+| Subsumes | 297 |
+| Blank relationship | 220 |
+| Has asso proc | 201 |
+| Has measurement | 191 |
+| Has asso finding | 61 |
+| Has asso visit | 7 |
+
+Additional curation facts:
+
+- Every row currently has a populated `source_concept_id`.
+- 75 rows have `target_concept_id = -1`, representing potentially junk concepts.
+- 220 rows have no populated `relationship_id`; these rows are not exported to
+  `source_to_concept_map.csv`.
+- All 26,916 rows have an `author_label`.
+- 18,839 rows have a `reviewer_label` in the curation file.
+
+
 # Vocabulary and Mapping Specification
 
 ## Concept IDs
-### `SOURCE_CONCEPT_ID` in the `source mapping table`
-Source concept IDs are initially set to 0 in the `source mapping table`. During the transformation workflow, stable IDs greater than 2 billion are automatically generated to align with OHDSI conventions for custom vocabulary concepts. These IDs are persistent, once assigned to a source_code, they do not change, and can be found in the vocabulary delta tables to ensure traceability and reproducibility. 
+
+MIMIC4 concepts use custom concept identifiers greater than 2 billion, following
+OHDSI custom vocabulary conventions. Once assigned to a source code, a
+`source_concept_id` should remain stable so mappings are traceable across
+refreshes.
 
 ## Concept Names
 
-### `SOURCE_DESCRIPTION` in the `source mapping table`
-Concept names mirror original MIMIC descriptions. Where needed, semantic enrichment was applied:
-- Concatenation using pipes: e.g., `Glucose|Urine|Chemistry`
-- Drug codes (e.g., CPT4, HCPCS) resolved using OHDSI Athena via `source_code` matching.
-- Duplicate concept names with different source_code values have the source_code appended in brackets for disambiguation (e.g. `Glucose|Blood|Chemistry (50931)` and `Glucose|Blood|Chemistry (52569)`)
+Concept names preserve original MIMIC descriptions (`source_description` field) where possible. Semantic
+enrichment is used when needed:
+
+- Pipe-delimited context, such as analyte, specimen, or category.
+- Drug name resolution from available MIMIC drug, NDC, formulary, and RxNorm
+  context.
+- Source code disambiguation when the same display name appears for distinct
+  source codes.
+- Expanded synonyms in 
+  `source_description_synonym`.
+
+  ### Vocabulary ID
+
+All source concepts are assigned to the `MIMIC4` vocabulary. `MIMIC4` is
+registered through `vocabulary_delta.csv`.
+
+### Validity Dates and Invalid Reason
+
+Current active rows use the following conventions:
+
+| Field | Current convention |
+|---|---|
+| `valid_start_date` | `2025-05-07` or `2026-05-28`, depending on when the row entered the generated package. |
+| `valid_end_date` | `2099-12-31` for all active concept and relationship rows. |
+| `invalid_reason` | Blank for all active concept and relationship rows in the current delta files. |
 
 ## Domains
-### `SOURCE_DOMAIN` in the `source mapping table`
+`source_domain` in `Mappings/mimic_mapping.csv` reflects the curation-layer
+domain assignment.
 
-### Domain Inference
+Current source-domain row counts:
 
-- **Codes with `Maps to` relationships**: Inherit domain from the target OMOP concept
-- **Codes without `Maps to` relationships**: Domains are assigned semi-automatically based on OMOP domain definitions, existing concept hierarchies, and subject-matter expertise.
-
-| Source Domain | Count |
-|--------|-------|
-| Drug | 2579 |
-| Measurement | 2365 |
-| Procedure | 2319 |
-| Observation | 1695 |
-| Unit | 427 |
-| Spec Anatomic Site | 382 |
-| Meas Value | 126 |
-| Specimen | 113 |
-| Route | 77 |
-| Device | 34 |
-| Race | 30 |
-| Condition | 16 |
-| Ethnicity | 1 |
+| Source domain | Mapping rows |
+|---|---:|
+| Drug | 12,370 |
+| Observation | 7,430 |
+| Measurement | 3,121 |
+| Procedure | 2,757 |
+| Unit | 396 |
+| Device | 150 |
+| Specimen | 146 |
+| Condition | 120 |
+| Route | 117 |
+| Visit | 86 |
+| Undefined | 74 |
+| Waveform Metadata | 44 |
+| Meas Value | 39 |
+| Language | 23 |
+| Race | 17 |
+| Ethnicity | 17 |
+| Type Concept | 8 |
 | Note | 1 |
+
+Domain assignment rules:
+
+- Rows with valid `Maps to` relationships generally inherit the target OMOP
+  domain where appropriate.
+- Rows without a standard target are assigned domains using OMOP domain
+  definitions, available hierarchy, source-table context, and clinical subject
+  matter review.
+- Some source categories legitimately split across domains. For example,
+  MIMIC item labels can represent measurements, procedures, observations,
+  conditions, notes, or device-related concepts depending on source semantics
+  and downstream ETL use.
 
 ### Domain Special Cases
 
-| Source Table / Concept Class | Target Domain | Example (`source_description`→ `target_concept_id \| target_concept_name)` | 
-|-|-|-| 
-| admission-class | Observation | `SURGICAL SAME DAY ADMISSION` → `46271037 \| Admission to same day surgery center` | 
-| bodysite | Spec Anatomic Site | `L Hand` → `4309650 \| Structure of left hand` | 
-| d-items | Measurement | `Minute Volume` → `4353621 \| Minute volume` |
-| d-items | Observation | `Temperature Site` → `3024265 \| Body temperature measurement site` | 
-| d-items | Procedure | `Invasive Ventilation` → `37158404 \| Invasive mechanical ventilation`<br>ETL logic: If concept has positive value/answer in source data, populate modifier_concept_id/modifier_source_value in the procedure_occurrence table. | 
-| d-items | Condition | `Pneumothorax` → `253796 \| Pneumothorax`<br>ETL logic: If concept has positive value/answer in source data, create a record in the condition_occurrence table. | 
-| d-items | Note | `Blood Transfusion Consent` → `36304120 \| Blood or blood product transfusion consent Document` | 
-| d-labitems | Measurement | `CD3 \%\|Blood\|Hematology` → `3022533 \| CD3 cells/100 cells in Blood` |
-| d-labitems | Meas Value | `Voided Specimen` → `42530744 \| Sample could not be processed`<br>ETL logic: Exclude from event tables as no meaningful info, or populate Observation table if needed (e.g., 4264983 | Specimen observable). | 
-| mimic-hcpcs-cd | Procedure | `Open treatment of lunate dislocation` → `4003681 \| Open reduction of lunate dislocation` | 
-| mimic-hcpcs-cd | Measurement | `Monitoring of interstitial fluid pressure... in detection of muscle compartment syndrome` → `4238690 \| Measurement of interstitial fluid pressure in muscle compartment` 
-| mimic-lab-fluid | Specimen | `Joint Fluid` → `4331823 \| Joint fluid specimen` 
-| mimic-medication-formulary-drug-cd | Drug | `Acebutolol HCl 200 mg Cap` → `40223169 \| acebutolol 200 MG Oral Capsule` | 
-| mimic-medication-frequency | Meas Value | `Q4HWA` → `4288393 \| Every four hours while awake` | 
-| mimic-medication-frequency | Observation | `2X` → `4226923 \| Twice` | 
-| mimic-medication-icu | Drug | `Insulin - Humalog 75/25` → `2920266 \| insulin lispro 25 UNT/ML / insulin lispro protamine, human 75 UNT/ML Pen Injector [Humalog]` | 
-| mimic-medication-icu | Device | `Glucerna 1.5 (Full)` → `44923157 \| GLUCERNA 1.5 CAL LIQUID` | 
-| mimic-medication-icu | Measurement | `OR Packed RBC Intake` → `3040494 \| Transfuse packed erythrocytes units [#]` | 
-| mimic-medication-icu | Observation | `PO Intake` → `3656010 \| Oral intake` | 
-| mimic-medication-route | Route | `SUBCUT` → `4142048 \| Subcutaneous` | 
-| mimic-medication-site | Spec Anatomic Site | `left lower back` → `44795036 \| Left lower back structure` | 
-| mimic-microbiology-antibiotic | Drug | `CIPROFLOXACIN` → `1797513 \| ciprofloxacin` |
-| mimic-microbiology-organism | Observation | `SHIGELLA FLEXNERI` → `4311807 \| Shigella flexneri` | 
-| mimic-microbiology-organism | Meas Value | `NO GROWTH` → `4139623 \| No growth` | 
-| mimic-microbiology-organism | Measurement | `ABIOTROPHIA/GRANULICATELLA SPECIES` → `46274109 \| Abiotrophia species or Granulicatella species` | 
-| mimic-microbiology-test | Measurement | `Cipro Resistant Screen (90224)` → `3023143 \| Ciprofloxacin [Susceptibility]` |
-| mimic-microbiology-test | Procedure | `POTASSIUM HYDROXIDE PREPARATION` → `4099465 \| KOH preparation` | 
-| mimic-microbiology-test | Observation | `CRYPTOCOCCAL ANTIGEN` → `4012262 \| Cryptococcus antigen` | 
-| mimic-race | Race | `ASIAN - KOREAN` → `38003585 \| Korean` |
-| mimic-race | Observation | `MULTIPLE RACE/ETHNICITY` → `44814659 \| Multiple race` | 
-| mimic-race | Ethnicity | `HISPANIC OR LATINO` → `38003563 \| Hispanic or Latino` |
-| mimic-spec-type-desc | Specimen | `Stem Cell - Blood Culture` → `37164572 \| Stem cell specimen` | 
-| mimic-units | Unit | `mm/hr` → `8752 \| millimeter per hour` | 
-| mimic4wdb | Measurement | `HR [BPM]` → `3027018 \| Heart rate` |
-
-## Vocabulary ID
-### `SOURCE_VOCABULARY_ID` in the `source mapping table`
-All terms are assigned the `MIMIC4` vocabulary ID. This vocabulary is introduced as a new entity via the `CONCEPT_DELTA` and `VOCABULARY_DELTA` tables.
+| Source Table / Concept Class | Target Domain | Example (`source_description` → `target_concept_id \| target_concept_name`) |
+|---|---|---|
+| `mimiciv_hosp.admissions.admission_type` | Visit | `SURGICAL SAME DAY ADMISSION` → `9201 \| Inpatient Visit` |
+| `mimiciv_hosp.emar_detail.site` | Spec Anatomic Site | `L Hand` → `4309650 \| Structure of left hand` |
+| `mimiciv_icu.chartevents.itemid` | Measurement | `Minute Volume` → `4353621 \| Minute volume` |
+| `mimiciv_icu.chartevents.itemid` | Observation | `Temperature Site` → `3024265 \| Body temperature measurement site` |
+| `mimiciv_icu.procedureevents.itemid` | Procedure | `Invasive Ventilation` → `37158404 \| Invasive mechanical ventilation`<br><br>**ETL logic:** If the concept has a positive value or answer in the source data, populate `modifier_concept_id` and `modifier_source_value` in the `PROCEDURE_OCCURRENCE` table. |
+| `mimiciv_icu.procedureevents.itemid` | Condition | `Pneumothorax` → `253796 \| Pneumothorax`<br><br>**ETL logic:** If the concept has a positive value or answer in the source data, create a record in the `CONDITION_OCCURRENCE` table. |
+| `mimiciv_icu.d_items.label` | Note | `Blood Transfusion Consent` → `36304120 \| Blood or blood product transfusion consent Document` |
+| `mimiciv_hosp.d_labitems.itemid` | Measurement | `CD3 %\|Blood\|Hematology` → `3022533 \| CD3 cells/cells in Blood` |
+| `mimiciv_hosp.d_labitems.itemid` | Undefined | `Voided Specimen (51806)` → `-1 \| No valid target concept`<br><br>**ETL logic:** Exclude from event tables unless a local ETL chooses to retain it as an unmapped source-quality flag. |
+| `mimiciv_hosp.d_hcpcs.code` | Procedure | `Open treatment of lunate dislocation` → `4003681 \| Open reduction of lunate dislocation` |
+| `mimiciv_hosp.d_hcpcs.code` | Measurement | `Monitoring of interstitial fluid pressure (includes insertion of device, eg, wick catheter technique, needle manometer technique) in detection of muscle compartment syndrome` → `4238690 \| Measurement of interstitial fluid pressure in muscle compartment` |
+| `mimiciv_hosp.d_labitems.fluid` | Specimen | `Joint Fluid` → `4331823 \| Joint fluid specimen` |
+| `mimiciv_hosp.prescriptions.formulary_drug_cd` | Drug | `Acebutolol HCl 200 mg Cap` → `40223169 \| acebutolol 200 MG Oral Capsule` |
+| `mimiciv_hosp.pharmacy.frequency` | Meas Value | `Q4HWA` → `4288393 \| Every four hours while awake` |
+| `mimiciv_hosp.pharmacy.frequency` | Observation | `2X` → `4226923 \| Twice` |
+| `mimiciv_icu.inputevents.itemid` | Drug | `Insulin - Humalog 75/25` → `2920266 \| insulin lispro 25 UNT/ML / insulin lispro protamine, human 75 UNT/ML Pen Injector [Humalog]` |
+| `mimiciv_icu.inputevents.itemid` | Device | `Glucerna 1.5 (Full)` → `44923157 \| GLUCERNA 1.5 CAL LIQUID` |
+| `mimiciv_icu.inputevents.itemid` | Measurement | `OR Packed RBC Intake` → `3040494 \| Transfuse packed erythrocytes units [#]` |
+| `mimiciv_icu.inputevents.itemid` | Observation | `PO Intake` → `3656010 \| Oral intake` |
+| `mimiciv_hosp.prescriptions.route` | Route | `SUBCUT` → `4142048 \| Subcutaneous` |
+| `mimiciv_hosp.emar_detail.site` | Spec Anatomic Site | `left lower back` → `44795036 \| Left lower back structure` |
+| `mimiciv_hosp.microbiologyevents.ab_itemid` | Measurement | `CIPROFLOXACIN` → `3020153 \| Ciprofloxacin [Susceptibility] by Disk diffusion (KB)` |
+| `mimiciv_hosp.microbiologyevents.org_itemid` | Observation | `SHIGELLA FLEXNERI` → `4311807 \| Shigella flexneri` |
+| `mimiciv_hosp.microbiologyevents.org_itemid` | Meas Value | `NO GROWTH` → `4139623 \| No growth` |
+| `mimiciv_hosp.microbiologyevents.org_itemid` | Measurement | `ABIOTROPHIA/GRANULICATELLA SPECIES` → `46274109 \| Abiotrophia species or Granulicatella species` |
+| `mimiciv_hosp.microbiologyevents.test_itemid` | Measurement | `Cipro Resistant Screen (90224)` → `3023143 \| Ciprofloxacin [Susceptibility]` |
+| `mimiciv_hosp.microbiologyevents.test_itemid` | Procedure | `POTASSIUM HYDROXIDE PREPARATION` → `4099465 \| KOH preparation` |
+| `mimiciv_hosp.microbiologyevents.test_itemid` | Observation | `CRYPTOCOCCAL ANTIGEN` → `4012262 \| Cryptococcus antigen` |
+| `mimiciv_hosp.admissions.race` | Race | `ASIAN - KOREAN` → `38003585 \| Korean` |
+| `mimiciv_hosp.admissions.race` | Ethnicity | `MULTIPLE RACE/ETHNICITY` → `1546846 \| More than one ethnicity` |
+| `mimiciv_hosp.admissions.race` | Ethnicity | `HISPANIC OR LATINO` → `38003563 \| Hispanic or Latino` |
+| `mimiciv_hosp.microbiologyevents.spec_itemid` | Specimen | `Stem Cell - Blood Culture` → `37164572 \| Stem cell specimen` |
+| `mimiciv_units` | Unit | `mm/hr` → `8752 \| millimeter per hour` |
+| `mimic4wdb` | Measurement | `HR [BPM]` → `3027018 \| Heart rate` |
 
 ## Concept Classes
-### `SOURCE_CODE_SET` in the `source mapping table`
 
-Concept Class is derived from the MIMIC source table (captured in the source_code_set field). As part of the integration, 18 new concept classes are introduced and registered through the CONCEPT_DELTA and CONCEPT_CLASS_DELTA tables.
+The current package registers 40 concept classes. Concept class identifiers now
+use compact IDs such as `m4_lab_itemid` and `m4_rx_drug`, while
+`concept_class_name` preserves the source table or source field.
 
-| Concept Class | Count |
-|---------------|-------|
-| mimic-medication-formulary-drug-cd | 2314 |
-| mimic-hcpcs-cd | 2201 |
-| d-items | 1631 |
-| d-labitems | 1388 |
-| mimic-microbiology-organism | 636 |
-| mimic-units | 427 |
-| mimic4wdb | 368 |
-| mimic-medication-site | 302 |
-| mimic-medication-icu | 283 |
-| mimic-microbiology-test | 168 |
-| mimic-medication-frequency | 108 |
-| mimic-spec-type-desc | 103 |
-| bodysite | 80 |
-| mimic-medication-route | 77 |
-| mimic-race | 33 |
-| mimic-microbiology-antibiotic | 27 |
-| mimic-lab-fluid | 10 |
-| admission-class | 9 |
-| Total | 10165 |
-
+| Concept class ID | Source field | Concept rows |
+|---|---|---:|
+| `gcpt_drug_ndc` | `gcpt_drug_ndc` | 1,297 |
+| `m4_adm_location` | `mimiciv_hosp.admissions.admission_location` | 43 |
+| `m4_adm_race` | `mimiciv_hosp.admissions.race` | 34 |
+| `m4_adm_type` | `mimiciv_hosp.admissions.admission_type` | 9 |
+| `m4_careunit` | `mimiciv_hosp.transfers.careunit` | 5 |
+| `m4_chart_itemid` | `mimiciv_icu.chartevents.itemid` | 163 |
+| `m4_chart_value` | `mimiciv_icu.chartevents.value` | 18 |
+| `m4_curr_service` | `mimiciv_hosp.services.curr_service` | 19 |
+| `m4_datetime_item` | `mimiciv_icu.datetimeevents.itemid` | 129 |
+| `m4_discharge_loc` | `mimiciv_hosp.admissions.discharge_location` | 13 |
+| `m4_ditem_label` | `mimiciv_icu.d_items.label` | 1,207 |
+| `m4_drg_desc` | `mimiciv_hosp.drgcodes.description` | 900 |
+| `m4_emar_site` | `mimiciv_hosp.emar_detail.site` | 301 |
+| `m4_formulary_cd` | `mimiciv_hosp.prescriptions.formulary_drug_cd` | 2,311 |
+| `m4_generated` | `mimiciv_mimic_generated` | 12 |
+| `m4_hcpcs_code` | `mimiciv_hosp.d_hcpcs.code` | 2,201 |
+| `m4_icd_dx_code` | `mimiciv_hosp.d_icd_diagnoses.icd_code` | 3,421 |
+| `m4_icd_px_code` | `mimiciv_hosp.d_icd_procedures.icd_code` | 63 |
+| `m4_input_itemid` | `mimiciv_icu.inputevents.itemid` | 283 |
+| `m4_insurance` | `mimiciv_hosp.admissions.insurance` | 5 |
+| `m4_lab_fluid` | `mimiciv_hosp.d_labitems.fluid` | 10 |
+| `m4_lab_itemid` | `mimiciv_hosp.d_labitems.itemid` | 1,506 |
+| `m4_language` | `mimiciv_hosp.admissions.language` | 23 |
+| `m4_marital_status` | `mimiciv_hosp.admissions.marital_status` | 7 |
+| `m4_meas_wf` | `mimiciv_meas_wf` | 33 |
+| `m4_meas_wf_unit` | `mimiciv_meas_wf_unit` | 3 |
+| `m4_micro_ab` | `mimiciv_hosp.microbiologyevents.ab_itemid` | 29 |
+| `m4_micro_interp` | `mimiciv_hosp.microbiologyevents.interpretation` | 4 |
+| `m4_micro_org` | `mimiciv_hosp.microbiologyevents.org_itemid` | 677 |
+| `m4_micro_spec` | `mimiciv_hosp.microbiologyevents.spec_itemid` | 113 |
+| `m4_micro_test` | `mimiciv_hosp.microbiologyevents.test_itemid` | 172 |
+| `m4_output_itemid` | `mimiciv_icu.outputevents.itemid` | 67 |
+| `m4_proc_itemid` | `mimiciv_icu.procedureevents.itemid` | 113 |
+| `m4_rx_drug` | `mimiciv_hosp.prescriptions.drug` | 4,493 |
+| `m4_rx_frequency` | `mimiciv_hosp.pharmacy.frequency` | 108 |
+| `m4_rx_ndc` | `mimiciv_hosp.prescriptions.ndc` | 3,742 |
+| `m4_rx_route` | `mimiciv_hosp.prescriptions.route` | 100 |
+| `m4_units` | `mimiciv_units` | 392 |
+| `mimic4wdb` | `mimic4wdb` | 368 |
 ---
 
 ## Standard Concepts Logic
 
-*No specific field in the `source mapping table`; assigned during transformation.*
+MIMIC4 concepts follow this convention:
 
-- **Standard concepts (`standard_concept = 'S'`)**:  
-  MIMIC-IV codes that do **not** have a valid mapping to a Standard OMOP concept are designated as **Standard** within the custom vocabulary. These typically represent novel or local source concepts without a direct OMOP equivalent but are still meaningful for analytical use. In the `concept_relationship` table, these codes have a `"Maps to"` relationship that points **back to their own `concept_id`** (i.e., self-mapping).
-
-    -  **Special Case:**  
-In the `source mapping table`, there are **three instances** where source terms are mapped to **non-standard but valid OMOP concepts.** All three originate from the `mimic-race` table:
-
-| source_description            | relationship_id | predicate_id      | confidence | target_concept_id | target_concept_name       | target_vocabulary_id | target_domain_id |
-|-------------------------------|-----------------|-------------------|------------|-------------------|---------------------------|----------------------|------------------|
-| MULTIPLE RACE/ETHNICITY       | Maps to         | skos:exactMatch   | 1          | 44814659          | Multiple race             | PCORNet              | Observation      |
-| PATIENT DECLINED TO ANSWER    | Maps to         | skos:exactMatch   | 1          | 44814660          | Refuse to answer          | PCORNet              | Observation      |
-| UNKNOWN                       | Maps to         | skos:exactMatch   | 1          | 45431577          | RACE: Unknown             | Read                 | Race             |
-
-According to **THEMIS recommendations**, these mappings are valid for ETL implementation. However, when constructing delta tables, and following the **standard OMOP logic of concept assignment, these source terms are expected to become Standard MIMIC-IV concepts with self-mapping.** 
-
-- **Non-standard concepts (`standard_concept IS NULL`)**:  
-  MIMIC-IV codes that are mapped to existing Standard OMOP concepts are classified as **Non-standard**. Their `"Maps to"` relationship in the `concept_relationship` table links to the appropriate Standard OMOP concept and can be:
-  - **1-to-1** (direct mapping)
-  - **1-to-many** (applicable to the Drug domain in MIMIC-IV)
-
-- **Invalid/junk concepts**:  
-  MIMIC-IV codes with `target_concept_id = -1` are classified as **Non-standard**. These represent ambiguous or uninterpretable codes and are **excluded** from the custom ontology as potential Standard concepts.
+- MIMIC4 source concepts without a valid external standard target become
+  standard MIMIC4 concepts with `standard_concept = S`.
+- MIMIC4 source concepts with valid mappings to existing standard OMOP concepts
+  remain non-standard source concepts.
+- Self-mapping rows are used where a MIMIC4 concept is standard within the
+  custom vocabulary.
+- Rows with `target_concept_id = -1` represent invalid, ambiguous, or otherwise uninterpretable source terms. They are therefore classified as non-standard concepts, excluded from mapping relationships, and should not be used for ETL standardization.
 
 ---
 ## Concept Codes
 ### `SOURCE_CODE` in the `source mapping table`  
 
-Source codes in MIMIC-IV are heterogeneous: some are original numeric `itemid` values, others are alphanumeric (e.g., drug codes), and in certain cases, the source code **duplicates** the `source_description` field where no distinct `source_code` was provided initially.
+Source codes in MIMIC-IV are heterogeneous. They include original numeric `itemid` values, alphanumeric identifiers such as drug and procedure codes, and descriptive text where the source dataset does not provide a separate technical code. In the latter cases, source_code may duplicate source_description.
 
-To prevent **duplicate source codes within a single vocabulary** (which violates OMOP conventions), the following transformations were applied to ensure uniqueness:
+The OMOP `concept_code` field is limited to 50 characters. Plain truncation of longer MIMIC4 source codes (especially, DRG descriptions as codes) is not used because different values may share the same first 50 characters and consequently produce duplicate `concept_code` values. 
 
-- In two cases, an additional identifier was added in brackets to distinguish source codes:  
-  - `[AS]` in `mimic4wdb`  
-  - `[IU]` in `mimic-units`
+For long or duplicated codes, the generated value follows this pattern: `<shortened source-code prefix>_<source_concept_id>` Because `source_concept_id` is stable and unique for each MIMIC-IV source concept, this approach prevents collisions while preserving as much of the original source code as possible. It also ensures that concept codes remain reproducible across vocabulary builds.
 
-- For **CPT4 codes** (from `mimic-hcpcs-cd`), the original code system was prefixed for clarity and uniqueness:  
-  - e.g., `CPT4:50961`  
-  - This was applied to **51 codes** that conflicted with codes in `d-labitems`.
+> *Tip:* For DRG concepts, joining by `concept_name` is generally preferable to joining by `concept_code`, because DRG descriptions are used as source codes and can be shortened during the build; the join should also be constrained by `vocabulary_id` and `concept_class_id` to avoid ambiguous matches.
 
 ## Concept Synonyms
 
@@ -259,21 +386,20 @@ Three types of relationships are modeled:
 
 - **Mapping**: e.g., `"Maps to"`, `"Maps to value"`
 - **Hierarchical**: `"Is a"`, `"Subsumes"`
-- **Attributive**: `"Has measurement"`, `"Has relat context"`, etc.
+- **Attributive**: `"Has measurement"`, `"Has relat context"`, `"Has asso finding"`, `"Has asso visit"` etc.
 
 | Relationship Type | Count | Predicate ID | Type |
 |-------------------|--------|-----------|-----------|
-| Maps to | 8 338 | skos:exactMatch / skos:closeMatch | Mapping |
-| Maps to value | 6 | skos:closeMatchValue | Mapping |
-| Is a | 795| skos:broadMatch | Hierarchical | Hierarchical |
-| Subsumes | 323 | skos:narrowMatch | Hierarchical |
-| Has relat context | 837 | skos:relatedMatch | Attributive |
-| Has measurement | 232 | skos:relatedMatch | Attributive |
-| Has asso proc | 264 | skos:relatedMatch | Attributive |
-| Has asso finding | 77 | skos:relatedMatch | Attributive |
+| Maps to | 24,977 | skos:exactMatch / skos:closeMatch | Mapping |
+| Maps to value | 1,204 | skos:closeMatchValue | Mapping |
+| Is a | 1,616| skos:broadMatch | Hierarchical | Hierarchical |
+| Subsumes | 1,616 | skos:narrowMatch | Hierarchical |
+| Has relat context | 762 | skos:relatedMatch | Attributive |
+| Has measurement | 191 | skos:relatedMatch | Attributive |
+| Has asso proc | 201 | skos:relatedMatch | Attributive |
+| Has asso finding | 61 | skos:relatedMatch | Attributive |
 | Has asso visit | 7 | skos:relatedMatch | Attributive |
-| `[No relationship]` | 114 | skos:noMatch | Candidate or Junk concept |
-| Total | 10993 |||
+| Total (with reverse) | 57888 |||
 
 ## Hierarchy
 
@@ -285,6 +411,55 @@ MIMIC-IV has no native hierarchical structure. However:
 - Non-standard concepts are excluded from ancestor chains
 
 ---
+# Loading the Ontology Into OMOP
+### Required Tools and Access
+
+- Athena OHDSI account for downloading standard vocabularies.
+- PostgreSQL-compatible OMOP vocabulary schema.
+- SQL client or loader such as `psql`, DBeaver, pgAdmin, Python, R, or Scala.
+- Write access to a development vocabulary schema.
+- The MIMIC delta files in `MIMIC/Ontology`.
+- The delta table DDL in `MIMIC/Builder/sql/delta-tables-ddl.sql`.
+
+### Required Baseline Vocabularies
+
+Download the required standard vocabularies from Athena before applying MIMIC4
+deltas. The current mapping files reference these target vocabularies:
+
+- CMS Place of Service
+- CPT4
+- CVX
+- dm+d
+- DRG
+- Ethnicity
+- HCPCS
+- ICD10PCS
+- LOINC
+- NDC
+- NUCC
+- OMOP Extension
+- PPI
+- Race
+- RxNorm
+- RxNorm Extension
+- SNOMED
+- UCUM
+- Visit
+
+Also include standard OMOP vocabulary files required by your CDM installation,
+including `CONCEPT`, `CONCEPT_ANCESTOR`, `CONCEPT_CLASS`,
+`CONCEPT_RELATIONSHIP`, `CONCEPT_SYNONYM`, `DOMAIN`, `DRUG_STRENGTH`,
+`RELATIONSHIP`, and `VOCABULARY`.
+
+If your organization does not hold a license for a restricted vocabulary such as
+CPT4, do not download or redistribute that vocabulary outside license terms.
+
+### Load Sequence
+
+1. Load baseline Athena vocabulary files into the OMOP vocabulary schema.
+2. Create or truncate staging delta tables using
+   `MIMIC/Builder/sql/delta-tables-ddl.sql`.
+3. Load MIMIC delta CSV files into the corresponding staging delta tables.
 
 ## ETL Guidance
 
@@ -293,7 +468,7 @@ Best practices for integrating MIMIC-IV source values into your OMOP CDM instanc
 ### 1. **Extract**
 
 Retrieve source values using:  
-- MIMIC-IV source table  
+- MIMIC-IV source table name  
 - `source_code` (the specific code to be mapped, e.g., `itemid`)  
 - `source_description` (the human-readable name of the source code)
 These three fields together form the **minimal key set** required for joining with the custom vocabulary. Including `source_description` ensures robust validation, facilitates fallback mapping (e.g., `concept_name` joins), and provides semantic clarity during ETL processing.
@@ -304,7 +479,7 @@ A **multi-pass join strategy with contextual filtering** ensures mapping complet
 
 1. **First pass (primary join on `concept_code`):**  
    - Join source data with the vocabulary on `concept_code`.  
-   - Apply filters by `domain_id` and/or `concept_class_id` (reflecting the MIMIC source table being processed) to ensure contextually correct matches.  
+   - Apply filters by `domain_id` and/or `concept_class_id` (reflecting the MIMIC source table being processed, see concept_class_delta.csv for more details) to ensure contextually correct matches.  
    - Resolves the majority of mappings where codes are unique and well-defined.
 
 2. **Second pass (fallback join on `concept_name`):**  
@@ -336,6 +511,7 @@ Insert transformed data into the appropriate OMOP CDM tables, such as:
 - `MEASUREMENT`
 - `CONDITION_OCCURRENCE`
 - `DRUG_EXPOSURE`
+- `DEVICE_EXPOSURE`
 - `PROCEDURE_OCCURRENCE`
 - `OBSERVATION`
 - (Others as needed)
@@ -378,13 +554,3 @@ Certain mappings rely on **ambiguous or broad target concepts** that may require
 Not all mapping rows are fully **qualified by associated units or specimen types.** In cases where the original source code is underspecified, there is a risk that mapped concepts may be **misclassified or misinterpreted,** especially for laboratory tests or microbiology results.
 
 *Improvement opportunity:* Enhance mapping granularity by explicitly associating each mapping with validated `unit_concept_id` and `specimen_concept_id` values where applicable.
-
----
-
-## Recommendations and Next Steps
-
-- Ensure **complete and consistent population** of provenance metadata (e.g., `author_label`, `reviewer_label`) across all mappings to enhance traceability, accountability, and transparency.
-- Expand **validation layers** to include more robust checks for mapping accuracy and hierarchical integrity.
-- Broaden **mapping coverage** to address remaining gaps and ensure comprehensive representation of all relevant MIMIC-IV source concepts.
-- Continuously enhance **mapping quality** through iterative review, expert validation, and refinement of ambiguous mappings.
-- Integrate **new standard concepts** with the Critical Care ontology to strengthen semantic alignment and improve interoperability for intensive care research.
